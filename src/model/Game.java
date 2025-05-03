@@ -59,6 +59,8 @@ public class Game {
         }
 
         chooseTrump();
+        deck.setTrumpCards(deck.shuffledCards, trump);
+        deck.printCards(deck.shuffledCards);
 
         for( Player player: players)
         {
@@ -97,6 +99,7 @@ public class Game {
 
     public void playGame(){
         System.out.println("Game is about to start!");
+
         System.out.println("Shuffling teams!");
         System.out.println("First player is:" + whoIsShuffling() + ". " + teams.getFirst().getName() + " is dealing cards!");
         dealCards();

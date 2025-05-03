@@ -11,8 +11,7 @@ public class Main {
         System.out.println(game.getTeamMembers());
         System.out.println(game.getPlayerNames());
         System.out.println(game.getPlayers());
-        game.chooseTrump();
-
+        game.playGame();
     }
 
 }
