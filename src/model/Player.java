@@ -7,7 +7,7 @@ import model.Card;
 
 public class Player {
     private final String name;
-    private final List<Card> hand;
+    public final List<Card> hand;
 
     public Player(String name) {
         if(name == null || name.trim().isEmpty()){
@@ -28,5 +28,9 @@ public class Player {
     public void addToHand( Card card)
     {
         hand.add(card);
+    }
+
+    public Card playCard(int index){
+        return hand.remove(index);
     }
 }

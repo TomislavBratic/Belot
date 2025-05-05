@@ -41,15 +41,21 @@ public class Game {
                 ));
 
     }
+    public List<Team> createTeams(List<Player> players) {
+        if (players.size() == 2) {
+            return List.of(
+                    new Team("Team 1", players.get(0), players.get(1))
+            );
+        } else {
+            return List.of(
+                    new Team("Team 1", players.get(0), players.get(2)),
+                    new Team("Team 2", players.get(1), players.get(3))
+            );
+        }
+    }
 
     public void dealCards() {
-        // in belot, we are dealing first 6 cards, in which player can see, and other 2 which player can not see
-        // after dealing cards, player to the right of dealer can call trump, and if not, call is being passed to another player, in non-clockwise order
-        // if no one calls, dealer must call it
-        // after selecting trump, players can see rest of the cards, and player right of the dealer first plays
-
         List<Player> players = getPlayers();
-
         for( Player player: players)
         {
             for(int i = 0; i < 6; i++)
@@ -57,10 +63,8 @@ public class Game {
                 player.addToHand(this.deck.shuffledCards.get(i));
             }
         }
-
         chooseTrump();
         deck.setTrumpCards(deck.shuffledCards, trump);
-        deck.printCards(deck.shuffledCards);
 
         for( Player player: players)
         {
@@ -77,32 +81,12 @@ public class Game {
         return shuffledPlayers;
     }
 
-    public List<Team> createTeams(List<Player> players) {
-        if (players.size() == 2) {
-            return List.of(
-                    new Team("Team 1", players.get(0), players.get(1))
-            );
-        } else {
-            return List.of(
-                    new Team("Team 1", players.get(0), players.get(2)),
-                    new Team("Team 2", players.get(1), players.get(3))
-            );
-        }
-    }
     public String whoIsShuffling() {
         return teams.stream()
                 .flatMap(team -> team.getMembers().stream())
                 .map(Player::getName)
                 .findFirst()
                 .orElse("No player found");
-    }
-
-    public void playGame(){
-        System.out.println("Game is about to start!");
-
-        System.out.println("Shuffling teams!");
-        System.out.println("First player is:" + whoIsShuffling() + ". " + teams.getFirst().getName() + " is dealing cards!");
-        dealCards();
     }
 
     public List<Player> getPlayers(){
@@ -116,6 +100,44 @@ public class Game {
         Collections.shuffle(colors);
         trump = colors.getFirst();
         System.out.println("Trump is:" + trump);
+    }
+
+    public void playRound(int roundNumber){
+        List<Player> players = getPlayers();
+        List <Card> Table = new ArrayList<>();
+        Random random = new Random();
+        Round round = new Round(roundNumber);
+
+        for(Player player: players)
+        {
+            int index = random.nextInt(player.hand.size());
+            Card playedCard = player.playCard(index);
+            Table.add(playedCard);
+        }
+    }
+
+    public void spinningCursor(String message, int cycles, int delayMs) {
+        String[] spinner = {"|", "/", "-", "\\"};
+        for (int i = 0; i < cycles; i++) {
+            System.out.print("\r" + message + " " + spinner[i % spinner.length]);
+            try {
+                Thread.sleep(delayMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        System.out.print("\r" + message + " Done!\n");
+    }
+
+    public void playGame(){
+        int roundNumber = 1;
+        System.out.println("Game is about to start!");
+        spinningCursor("Shuffling teams ", 20, 200);
+
+        System.out.println("First player is:" + whoIsShuffling() + ". " + teams.getFirst().getName() + " is dealing cards!");
+        spinningCursor("dealing cards ", 20, 200);
+        dealCards();
+        playRound(roundNumber);
     }
 
     /*------------ Exercises ---------------*/
